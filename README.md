@@ -9,7 +9,7 @@ This is the backend for the Tehran-IPA project built with Express.js.
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/yourusername/Tehran-IPA-Backend.git
+   git clone https://github.com/Doroudchi/Tehran-IPA-Backend.git
    cd Tehran-IPA-Backend/IPA-Backend
    ```
 
