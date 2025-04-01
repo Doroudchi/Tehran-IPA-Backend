@@ -16,7 +16,6 @@ async function getOrderedLastViewedProducts(customer_id) {
   const url = `https://acceptance.interdiscount.ch/idocc/occ/id/products?fieldSet=DEFAULT&ids=${productCodes.join(
     ","
   )}`;
-
   const response = await axios.get(url);
 
   const productMap = response.data.reduce((acc, product) => {
@@ -24,11 +23,7 @@ async function getOrderedLastViewedProducts(customer_id) {
     return acc;
   }, {});
 
-  const orderedProducts = productCodes
-    .map((code) => productMap[code])
-    .filter((p) => p);
-
-  return orderedProducts;
+  return productCodes.map((code) => productMap[code]).filter((p) => p);
 }
 
 exports.getLastViewed = async (customer_id) => {
@@ -60,8 +55,7 @@ exports.clearLastViewed = async (customer_id) => {
   });
 
   if (count === 0) {
-    const error = new Error("Last viewed list is already empty");
-    throw error;
+    throw new Error("Last viewed list is already empty");
   }
 
   await LastViewed.destroy({
@@ -77,8 +71,7 @@ exports.removeProductFromLastViewed = async (customer_id, product_code) => {
   });
 
   if (!entry) {
-    const error = new Error("Product not found in last viewed list");
-    throw error;
+    throw new Error("Product not found in last viewed list");
   }
 
   await LastViewed.destroy({

@@ -20,11 +20,9 @@ sequelize
   .catch((err) => console.error("Database connection failed:", err));
 
 sequelize
-  .sync()
+  .sync({ alter: true })
   .then(() => console.log("Database synchronized"))
   .catch((err) => console.error("Error synchronizing database", err));
-
-sequelize.sync({ alter: true });
 
 app.use((req, res, next) => {
   res.status(404).json({ message: "Not Found" });

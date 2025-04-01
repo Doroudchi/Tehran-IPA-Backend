@@ -5,13 +5,13 @@ const lastViewedController = require("../controllers/lastViewed.controller");
 
 router.use(validateApiKey);
 
-router.get("/users/:userId/lastviewed/", lastViewedController.getLastViewed);
+router.get("/users/:userId/lastviewed", lastViewedController.getLastViewed);
 router.put(
-  "/users/:userId/lastviewed/",
+  "/users/:userId/lastviewed",
   lastViewedController.addOrUpdateLastViewed
 );
 router.delete(
-  "/users/:userId/lastviewed/",
+  "/users/:userId/lastviewed",
   lastViewedController.clearLastViewed
 );
 router.delete(
