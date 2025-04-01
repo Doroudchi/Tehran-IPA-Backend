@@ -27,8 +27,8 @@ exports.addOrUpdateLastViewed = async (req, res) => {
 exports.clearLastViewed = async (req, res) => {
   const { userId } = req.params;
   try {
-    await lastViewedService.clearLastViewed(userId);
-    res.json({ message: "Last viewed list cleared." });
+    const result = await lastViewedService.clearLastViewed(userId);
+    res.json(result);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -37,8 +37,11 @@ exports.clearLastViewed = async (req, res) => {
 exports.removeProductFromLastViewed = async (req, res) => {
   const { userId, productCode } = req.params;
   try {
-    await lastViewedService.removeProductFromLastViewed(userId, productCode);
-    res.json({ message: "Product removed from last viewed list." });
+    const result = await lastViewedService.removeProductFromLastViewed(
+      userId,
+      productCode
+    );
+    res.json(result);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -48,8 +51,8 @@ exports.mergeLastViewed = async (req, res) => {
   const { userId } = req.params;
   const { products } = req.body;
   try {
-    await lastViewedService.mergeLastViewed(userId, products);
-    res.json({ message: "Last viewed list merged successfully." });
+    const result = await lastViewedService.mergeLastViewed(userId, products);
+    res.json(result);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

@@ -1,7 +1,7 @@
 const { Customer, Product, LastViewed } = require("../models");
 const axios = require("axios");
 
-exports.getLastViewed = async (customer_id) => {
+async function getOrderedLastViewedProducts(customer_id) {
   await Customer.findOrCreate({ where: { customer_id } });
 
   const lastViewed = await LastViewed.findAll({
@@ -29,6 +29,10 @@ exports.getLastViewed = async (customer_id) => {
     .filter((p) => p);
 
   return orderedProducts;
+}
+
+exports.getLastViewed = async (customer_id) => {
+  return await getOrderedLastViewedProducts(customer_id);
 };
 
 exports.addOrUpdateLastViewed = async (customer_id, product_code) => {
@@ -47,19 +51,41 @@ exports.addOrUpdateLastViewed = async (customer_id, product_code) => {
     );
   }
 
-  return { message: created ? "Added to last viewed." : "Timestamp updated." };
+  return await getOrderedLastViewedProducts(customer_id);
 };
 
 exports.clearLastViewed = async (customer_id) => {
+  const count = await LastViewed.count({
+    where: { customer_id },
+  });
+
+  if (count === 0) {
+    const error = new Error("Last viewed list is already empty");
+    throw error;
+  }
+
   await LastViewed.destroy({
     where: { customer_id },
   });
+
+  return await getOrderedLastViewedProducts(customer_id);
 };
 
 exports.removeProductFromLastViewed = async (customer_id, product_code) => {
+  const entry = await LastViewed.findOne({
+    where: { customer_id, product_code },
+  });
+
+  if (!entry) {
+    const error = new Error("Product not found in last viewed list");
+    throw error;
+  }
+
   await LastViewed.destroy({
     where: { customer_id, product_code },
   });
+
+  return await getOrderedLastViewedProducts(customer_id);
 };
 
 exports.mergeLastViewed = async (customer_id, products) => {
@@ -68,18 +94,18 @@ exports.mergeLastViewed = async (customer_id, products) => {
   for (const product_code of products) {
     await Product.findOrCreate({ where: { product_code } });
 
-    const existing = await LastViewed.findOne({
+    const [entry, created] = await LastViewed.findOrCreate({
       where: { customer_id, product_code },
+      defaults: { timestamp: new Date() },
     });
 
-    if (existing) {
-      await existing.update({ timestamp: new Date() });
-    } else {
-      await LastViewed.create({
-        customer_id,
-        product_code,
-        timestamp: new Date(),
-      });
+    if (!created) {
+      await LastViewed.update(
+        { timestamp: new Date() },
+        { where: { customer_id, product_code } }
+      );
     }
   }
+
+  return await getOrderedLastViewedProducts(customer_id);
 };
