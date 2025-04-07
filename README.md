@@ -23,11 +23,19 @@ This is the backend for the Tehran-IPA project built with Express.js.
 
    - Copy the example environment file:
      ```bash
-     cp .env.example .env.local
+     cp ../.env.example IPA-Backend/.env.local
      ```
-   - Open `.env.local` and update the variables with your own values
+   - Open `.env.local` and update the variables with your API key
 
-4. Start the server:
+4. Set up the database using Docker:
+
+   ```bash
+   cd ..
+   docker-compose up -d
+   cd IPA-Backend
+   ```
+
+5. Start the server:
 
    ```bash
    npm start
